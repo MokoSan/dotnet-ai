@@ -18,6 +18,11 @@ namespace dotnet_ai
             IKernel kernel = KernelBuilder.Create();
             string model = "gpt-3.5-turbo-16k";
             string apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                throw new ArgumentException("An OPENAI API Key must be added as an environment variable of name: OPENAI_API_KEY");
+            }
+
             string orgId = "";
             kernel.Config.AddOpenAIChatCompletionService(model, apiKey, orgId);
 
@@ -145,12 +150,12 @@ Additional commands from bundled tools:
 
             var systemMessage = $"You are a bot that generates a correctly formatted JSON list with dotnet sdk commands and code based on the following documentation: {skPrompt}.";
             var chat = (OpenAIChatHistory)chatGPT.CreateNewChat(systemMessage);
-            chat.AddUserMessage("Generate a list of all steps for the following query using the information above: " +
+            chat.AddUserMessage("Generate a list of all steps for the following query using the information above - the output should be descriptive, concise and contain the correct commands from the aforementioned documentation: " +
                 $"Query: {query}");
 
             string assistantReply = await chatGPT.GenerateMessageAsync(chat, new ChatRequestSettings() { MaxTokens = 10000, Temperature = 0.0 });
             chat.AddAssistantMessage(assistantReply);
-            Console.WriteLine($"Reply: {assistantReply}");
+            Console.WriteLine(assistantReply);
         }
 
         static async Task Main(string[] args)
