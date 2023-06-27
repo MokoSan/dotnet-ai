@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-ai", "dotnet-ai\dotnet-ai.csproj", "{E36F59CB-6187-446F-A909-7BF34AADCB9B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E36F59CB-6187-446F-A909-7BF34AADCB9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E36F59CB-6187-446F-A909-7BF34AADCB9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E36F59CB-6187-446F-A909-7BF34AADCB9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E36F59CB-6187-446F-A909-7BF34AADCB9B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4C32086-C512-40F8-8C09-287407FD7658}
+	EndGlobalSection
+EndGlobal
