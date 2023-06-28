@@ -170,6 +170,11 @@ Assume the following defaults:
             Console.WriteLine("Instructions:");
             Console.WriteLine(assistantReply);
             Console.WriteLine("\n");
+            if (!options.Execute)
+            {
+                return;
+            }
+
             Console.WriteLine("Executing Commands..");
 
             Regex regex = new Regex(@"```(.+?)```", RegexOptions.Singleline);
