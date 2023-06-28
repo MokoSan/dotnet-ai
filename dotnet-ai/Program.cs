@@ -2,6 +2,8 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.AI.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.AI.OpenAI.ChatCompletion;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace dotnet_ai
 {
@@ -9,11 +11,14 @@ namespace dotnet_ai
     {
         [Option('q', "query", Required = true, HelpText = "Query to request the program to run.")]
         public string Query { get; set; }
+
+        [Option('e', "execute", Required = false, HelpText = "Request the steps generated to be executed.")]
+        public bool Execute { get; set; } 
     }
 
     internal class Program
     {
-        static async Task Handle(string query)
+        static async Task Handle(Options options)
         {
             IKernel kernel = KernelBuilder.Create();
             string model = "gpt-3.5-turbo-16k";
@@ -148,20 +153,92 @@ Additional commands from bundled tools:
  `dotnet workload` - Provides information about the available workload commands and installed workloads.    ```dotnet workload [--info]  dotnet workload -?|-h|--help ``` 
 """;
 
-            var systemMessage = $"You are a bot that generates a correctly formatted JSON list with dotnet sdk commands and code based on the following documentation: {skPrompt}.";
+            var systemMessage = $"You are a bot that generates a correctly formatted list with dotnet sdk commands and code based on the following documentation: {skPrompt}.";
             var chat = (OpenAIChatHistory)chatGPT.CreateNewChat(systemMessage);
-            chat.AddUserMessage("Generate a list of all steps for the following query using the information above - the output should be descriptive, concise and contain the correct commands from the aforementioned documentation: " +
-                $"Query: {query}");
+            chat.AddUserMessage("Generate a list of all steps for the following query using the information above - the output should be descriptive, concise and contain the correct commands from the aforementioned documentation. If the user asks to write code, assume they want to create a project with the code" +
+                @"
+Assume the following defaults:
+1. The default language is C#.
+2. The project name is 'App'.
+3. The application type is console. " +
+                $"Query: {options.Query}"); ;
 
             string assistantReply = await chatGPT.GenerateMessageAsync(chat, new ChatRequestSettings() { MaxTokens = 10000, Temperature = 0.0 });
+            assistantReply = assistantReply.Replace("shell\n", "");
             chat.AddAssistantMessage(assistantReply);
+
+            Console.WriteLine("Instructions:");
             Console.WriteLine(assistantReply);
+            Console.WriteLine("\n");
+            Console.WriteLine("Executing Commands..");
+
+            Regex regex = new Regex(@"```(.+?)```", RegexOptions.Singleline);
+            var matches = regex.Matches(assistantReply);
+
+            foreach (Match match in matches)
+            {
+                // Extracts the commands and displays them on the console
+                string code = match.Groups[1].Value.Trim();
+                string[] split = code.Split(" ", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                switch (split[0])
+                {
+                    case "dotnet":
+                    case "shell":
+                    case "shell\n":
+                        using (Process process = new())
+                        {
+                            process.StartInfo.FileName = "dotnet";
+                            process.StartInfo.Arguments = code.Replace("dotnet", "").Replace("shell", "").Replace("shell\n", "");
+                            Console.WriteLine($"dotnet {process.StartInfo.Arguments}");
+                            process.StartInfo.UseShellExecute = false; 
+                            process.Start();
+                            process.WaitForExit();
+                        }
+                        break;
+
+                    case "cd":
+                        using (Process process = new())
+                        {
+                            string folder = code.Replace("cd", "");
+                            Console.WriteLine($"cd {folder}");
+                            Directory.SetCurrentDirectory(folder.Trim());
+                        }
+                        break;
+
+                    case "csharp":
+                    case "csharp\n":
+                        Console.WriteLine($"Writing code to Program.cs");
+                        string replaced = code.Replace("csharp", "").Replace("csharp\n", "");
+                        WriteProgramToFile(Path.Combine(Directory.GetCurrentDirectory(), "./Program.cs"), replaced);
+                        break;
+
+                    case "fsharp":
+                    case "fsharp\n":
+                        Console.WriteLine($"Writing code to Program.fs");
+                        replaced = code.Replace("fsharp", "").Replace("fsharp\n", "");
+                        WriteProgramToFile(Path.Combine(Directory.GetCurrentDirectory(), "./Program.fs"), replaced);
+                        break;
+
+                    case "vb":
+                    case "vb\n":
+                        Console.WriteLine($"Writing code to Program.vb");
+                        replaced = code.Replace("vb", "").Replace("vb\n", "");
+                        WriteProgramToFile(Path.Combine(Directory.GetCurrentDirectory(), "./Program.vb"), replaced);
+                        break;
+                }
+            }
+        }
+
+        private static void WriteProgramToFile(string path, string code)
+        {
+            File.Delete(path);
+            File.WriteAllText(path, code);
         }
 
         static async Task Main(string[] args)
         {
             var result = Parser.Default.ParseArguments<Options>(args);
-            await result.MapResult(async o => { await Handle(o.Query); }, errors => Task.FromResult(errors));
+            await result.MapResult(async o => { await Handle(o); }, errors => Task.FromResult(errors));
         }
     }
 }
