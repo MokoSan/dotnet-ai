@@ -21,7 +21,13 @@ set OPENAI_API_KEY = ''
 After building the project, you can invoke it by passing in the desired query with the --query argument:
 
 ```
-dotnet run -- --query "Create an application that prints Hello World"
+.\dotnet-ai.exe --query "Create an application that prints the planets of the solar system"
+```
+
+You can execute the query, as well by passing in the --execute flag:
+
+```
+.\dotnet-ai.exe --query "Create an application that prints the planets of the solar system" --execute
 ```
 
 ## Example Response
@@ -95,3 +101,7 @@ To create a program that generates the first 30 prime numbers and add the Newton
    ```dotnet run```
 
 This will generate and display the first 30 prime numbers. The Newtonsoft.Json NuGet package has been added to the project to enable JSON serialization and deserialization capabilities.
+
+## Next Steps
+
+- Create a dotnet tool with this project.
