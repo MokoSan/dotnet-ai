@@ -16,13 +16,15 @@
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/MokoSan/dotnet-ai</PackageProjectUrl>
     <PackageTags>AI, SemanticKernel, dotnet-cli, dotnet</PackageTags>
-    <PackageLicenseFile>.\LICENSE.txt</PackageLicenseFile>
     <Description>AI based tool that generates and executes dotnet commands.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="0.17.230626.1-preview" />
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
