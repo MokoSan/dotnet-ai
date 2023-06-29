@@ -6,6 +6,18 @@
     <RootNamespace>dotnet_ai</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<PackAsTool>true</PackAsTool>
+	<ToolCommandName>dotnet-ai</ToolCommandName>
+	<PackageOutputPath>./nupkg</PackageOutputPath>
+    <PackageVersion>0.0.1</PackageVersion>
+    <Owners>MokoSan</Owners>
+    <Authors>Mukund Raghav Sharma</Authors>
+    <RepositoryUrl>https://github.com/MokoSan</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/MokoSan/dotnet-ai</PackageProjectUrl>
+    <PackageTags>AI, SemanticKernel, dotnet-cli, dotnet</PackageTags>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Description>AI based tool that generates and executes dotnet commands.</Description>
   </PropertyGroup>
 
   <ItemGroup>
