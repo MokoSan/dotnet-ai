@@ -6,9 +6,9 @@
     <RootNamespace>dotnet_ai</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<PackAsTool>true</PackAsTool>
-	<ToolCommandName>dotnet-ai</ToolCommandName>
-	<PackageOutputPath>./nupkg</PackageOutputPath>
+	  <PackAsTool>true</PackAsTool>
+	  <ToolCommandName>dotnet-ai</ToolCommandName>
+	  <PackageOutputPath>./nupkg</PackageOutputPath>
     <PackageVersion>0.0.1</PackageVersion>
     <Owners>MokoSan</Owners>
     <Authors>Mukund Raghav Sharma</Authors>
