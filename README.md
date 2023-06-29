@@ -1,5 +1,7 @@
 # dotnet-ai
 
+![Nuget](https://img.shields.io/nuget/v/dotnet-ai?style=flat-square)
+
 This repo is responsible for listing steps to achieve the query requested by the user.
 
 ## Prerequisites
