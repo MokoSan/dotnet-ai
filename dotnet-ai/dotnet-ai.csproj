@@ -9,7 +9,7 @@
 	  <PackAsTool>true</PackAsTool>
 	  <ToolCommandName>dotnet-ai</ToolCommandName>
 	  <PackageOutputPath>./nupkg</PackageOutputPath>
-    <PackageVersion>0.0.1</PackageVersion>
+    <PackageVersion>0.0.2</PackageVersion>
     <Owners>MokoSan</Owners>
     <Authors>Mukund Raghav Sharma</Authors>
     <RepositoryUrl>https://github.com/MokoSan</RepositoryUrl>
