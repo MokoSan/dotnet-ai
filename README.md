@@ -20,10 +20,18 @@ The main purpose is to streamline and simplify the process of using the dotnet S
 3. Invoke the tool: 
    1. `dotnet-ai --query "Add your query here"`: This will list the steps required.
    2. `dotnet-ai --query "Add your query here" --execute`: This will list the steps required and then execute them.
+4. Examples:
+   1. Handling some basic SDK operations both in the form of questions and commands:
+      1. `dotnet-ai --query "Display the sdks installed" --execute`.
+      2. `dotnet-ai --query "How do I add a nuget package?"`.
+      3. `dotnet-ai --query "How do I uninstall a dotnet tool"`.
+   2. Generating projects from simple to more complex in C#, F# or Visual Basic:
+      1. `dotnet-ai --query "Create and run an application that'll print all the planets of the solar system."`.
+      2. `dotnet-ai --query "Create and run an application that'll generate the first 20 Fibonacci numbers in F# in a project called 'Fib'" --execute`.
+      3. `dotnet-ai --query "Create an implementation of Priority Queues in C#" --execute`.
+      4. `dotnet-ai --query "Implement of Bubblesort in VB in a project called Bubblesort" --execute`.
 
-Examples:
-- `dotnet-ai --query "Create and run an application that'll print all the planets of the solar system.`
-- `dotnet-ai --query "Create and run an application that'll generate the first 20 Fibonacci numbers in F# in a project called 'Fib'" --execute`
+NOTE: Some projects are too complex for the current LLM to generate code for.
     
 ## Getting Started With Development and Running Locally
 

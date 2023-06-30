@@ -153,7 +153,7 @@ Additional commands from bundled tools:
  `dotnet workload` - Provides information about the available workload commands and installed workloads.    ```dotnet workload [--info]  dotnet workload -?|-h|--help ``` 
 """;
 
-            var systemMessage = $"You are a bot that generates a correctly formatted list with dotnet sdk commands and code based on the following documentation: {skPrompt}.";
+            var systemMessage = $"You are a bot that generates a correctly formatted list with dotnet sdk commands and code based on the following documentation and convert all single backticks to triple backticks and all references to changing directories must be specified as a command: {skPrompt}.";
             var chat = (OpenAIChatHistory)chatGPT.CreateNewChat(systemMessage);
             chat.AddUserMessage("Generate a list of all steps for the following query using the information above - the output should be descriptive, concise and contain the correct commands from the aforementioned documentation. If the user asks to write code, assume they want to create a project with the code" +
                 @"
