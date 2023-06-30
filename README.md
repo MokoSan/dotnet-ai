@@ -1,41 +1,50 @@
-# dotnet-ai
+# dotnet-ai: Leveraging LLMs to Create and Run dotnet Projects Faster and Easier.
 
 ![Nuget](https://img.shields.io/nuget/v/dotnet-ai?style=flat-square)
 
-This repo is responsible for listing steps to achieve the query requested by the user.
+This tool leverages Large Language Models (LLMs) to convert a user query into a series of steps for the dotnet SDK that can be optionally executed.  To be put simply: The tool takes a user query of an intended action, an optional argument to execute the steps and responds with a series of steps. 
+
+The main purpose is to streamline and simplify the process of using the dotnet SDK to create projects by simply specifying instructions and optionally invoking them.
 
 ## Prerequisites
 
-1. Ensure you add the OpenAI API KEY to your environment such as the following if you are running in powershell:
+1. Acquire an OpenAI API KEY. [Here](https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/) is a tutorial on how to do so.
+2. Install the .NET6 SDK from [here](https://dotnet.microsoft.com/en-us/download/dotnet/6.0). 
 
-```
-$env:OPENAI_API_KEY = ''
-```
+## Getting Started 
 
-or the following if you are running in cmd:
+1. Install the dotnet-ai tool by invoking the following on your terminal: ``dotnet tool install dotnet-ai -g``.
+2. Set the OpenAI API Key as an environment variable.
+   1. If you are using Powershell, use: ``$env:OPENAI_API_KEY='Add Your OpenAI API Key Here'``
+   2. If you are using Command Prompt, use: ``set OPENAI_API_KEY=Add Your OPEN API KEY Without Quotations.``
+3. Invoke the tool: 
+   1. `dotnet-ai --query "Add your query here"`: This will list the steps required.
+   2. `dotnet-ai --query "Add your query here" --execute`: This will list the steps required and then execute them.
 
-```
-set OPENAI_API_KEY = ''
-```
+Examples:
+- `dotnet-ai --query "Create and run an application that'll print all the planets of the solar system.`
+- `dotnet-ai --query "Create and run an application that'll generate the first 20 Fibonacci numbers in F# in a project called 'Fib'" --execute`
+    
+## Getting Started With Development and Running Locally
 
-## Usage
-
-After building the project, you can invoke it by passing in the desired query with the --query argument:
-
-```
-.\dotnet-ai.exe --query "Create an application that prints the planets of the solar system"
-```
-
-You can execute the query, as well by passing in the --execute flag:
-
-```
-.\dotnet-ai.exe --query "Create an application that prints the planets of the solar system" --execute
-```
+1. Clone the repo: `git clone https://github.com/MokoSan/dotnet-ai.git`.
+2. cd into the folder: `cd dotnet-ai`.
+3. Build the repo: 
+   1. `cd dotnet-ai`.
+   2. `dotnet build`. Use `dotnet build -c Release` to build in Release mode.
+4. Run the code:
+   1. Running using the dotnet SDK:
+      1. `dotnet run -- --query "Create an application that prints the planets of the solar system."`.
+   2. Running from the binary:
+      1. `cd bin`.
+      2. `cd Debug` or `cd Release`.
+      3. `cd net6.0`.
+      4. `.\dotnet-ai.exe --query "Create an application that prints the planets of the solar system."`.
 
 ## Example Response
 
 ```
-.\dotnet-ai.exe --query "create a program that'll generate the first 30 prime numbers and also add the newtonsoft json nuget package"
+dotnet-ai --query "create a program that'll generate the first 30 prime numbers and also add the newtonsoft json nuget package"
 ```
 
 **Response**:
@@ -104,6 +113,10 @@ To create a program that generates the first 30 prime numbers and add the Newton
 
 This will generate and display the first 30 prime numbers. The Newtonsoft.Json NuGet package has been added to the project to enable JSON serialization and deserialization capabilities.
 
-## Next Steps
+## License
 
-- Create a dotnet tool with this project.
+This project is licensed under the [MIT License](https://github.com/git/git-scm.com/blob/main/MIT-LICENSE.txt).
+
+## Contributions and Issues
+
+Contributions are most welcome! If you encounter any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request.
