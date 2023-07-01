@@ -24,8 +24,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="0.17.230626.1-preview" />
-    <PackageReference Include="Spectre.Console" Version="0.47.1-preview.0.8" />
-    <None Include="..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>

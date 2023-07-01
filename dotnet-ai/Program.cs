@@ -1,10 +1,9 @@
-using CommandLine;
+﻿using CommandLine;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.AI.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.AI.OpenAI.ChatCompletion;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using Spectre.Console;
 
 namespace dotnet_ai
 {
@@ -19,22 +18,21 @@ namespace dotnet_ai
 
     internal class Program
     {
-        static async Task HandleInput(Options options)
+        static async Task Handle(Options options)
         {
             IKernel kernel = KernelBuilder.Create();
-            const string model = "gpt-3.5-turbo-16k";
+            string model = "gpt-3.5-turbo-16k";
             string apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             if (string.IsNullOrEmpty(apiKey))
             {
-                AnsiConsole.MarkupLine("[red bold] An OpenAI API Key must be added as an environment. To learn how to generate one please visit: https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/ [/]");
-                return;
+                throw new ArgumentException("An OPENAI API Key must be added as an environment variable of name: OPENAI_API_KEY");
             }
 
             string orgId = "";
             kernel.Config.AddOpenAIChatCompletionService(model, apiKey, orgId);
 
             var chatGPT = kernel.GetService<IChatCompletion>();
-            const string dotnetDocumentation = @"""
+            string skPrompt = @"""
 =======
 Documentation 
 =======
@@ -155,7 +153,7 @@ Additional commands from bundled tools:
  `dotnet workload` - Provides information about the available workload commands and installed workloads.    ```dotnet workload [--info]  dotnet workload -?|-h|--help ``` 
 """;
 
-            var systemMessage = $"You are a bot that generates a correctly formatted list with dotnet sdk commands and code based on the following documentation and convert all single backticks to triple backticks and all references to changing directories must be specified as a command: {dotnetDocumentation}.";
+            var systemMessage = $"You are a bot that generates a correctly formatted list with dotnet sdk commands and code based on the following documentation and convert all single backticks to triple backticks and all references to changing directories must be specified as a command: {skPrompt}.";
             var chat = (OpenAIChatHistory)chatGPT.CreateNewChat(systemMessage);
             chat.AddUserMessage("Generate a list of all steps for the following query using the information above - the output should be descriptive, concise and contain the correct commands from the aforementioned documentation. If the user asks to write code, assume they want to create a project with the code" +
                 @"
@@ -165,28 +163,22 @@ Assume the following defaults:
 3. The application type is console. " +
                 $"Query: {options.Query}"); ;
 
-            string assistantReply = string.Empty; 
-            await AnsiConsole.Status().Spinner(Spinner.Known.Star).Start("Generating Instructions...", async (ctx) => 
-            {
-                assistantReply = await chatGPT.GenerateMessageAsync(chat, new ChatRequestSettings() { MaxTokens = 10000, Temperature = 0.0 });
-            });
-
+            string assistantReply = await chatGPT.GenerateMessageAsync(chat, new ChatRequestSettings() { MaxTokens = 10000, Temperature = 0.0 });
             assistantReply = assistantReply.Replace("shell\n", "");
             chat.AddAssistantMessage(assistantReply);
 
-            AnsiConsole.MarkupLine("[green bold] Instructions: [/]");
-            AnsiConsole.WriteLine(assistantReply);
-            AnsiConsole.WriteLine();
-
+            Console.WriteLine("Instructions:");
+            Console.WriteLine(assistantReply);
+            Console.WriteLine("\n");
             if (!options.Execute)
             {
                 return;
             }
 
-            AnsiConsole.MarkupLine("[green bold] Executing Instructions. [/]");
+            Console.WriteLine("Executing Commands..");
 
             Regex regex = new Regex(@"```(.+?)```", RegexOptions.Singleline);
-            MatchCollection matches = regex.Matches(assistantReply);
+            var matches = regex.Matches(assistantReply);
 
             foreach (Match match in matches)
             {
@@ -202,7 +194,7 @@ Assume the following defaults:
                         {
                             process.StartInfo.FileName = "dotnet";
                             process.StartInfo.Arguments = code.Replace("dotnet", "").Replace("shell", "").Replace("shell\n", "");
-                            AnsiConsole.WriteLine($"dotnet {process.StartInfo.Arguments}");
+                            Console.WriteLine($"dotnet {process.StartInfo.Arguments}");
                             process.StartInfo.UseShellExecute = false; 
                             process.Start();
                             process.WaitForExit();
@@ -213,7 +205,7 @@ Assume the following defaults:
                         using (Process process = new())
                         {
                             string folder = code.Replace("cd", "");
-                            AnsiConsole.WriteLine($"cd {folder}");
+                            Console.WriteLine($"cd {folder}");
                             Directory.SetCurrentDirectory(folder.Trim());
                         }
                         break;
@@ -251,7 +243,7 @@ Assume the following defaults:
         static async Task Main(string[] args)
         {
             var result = Parser.Default.ParseArguments<Options>(args);
-            await result.MapResult(async o => { await HandleInput(o); }, errors => Task.FromResult(errors));
+            await result.MapResult(async o => { await Handle(o); }, errors => Task.FromResult(errors));
         }
     }
 }
