@@ -15,8 +15,8 @@ The main purpose is to streamline and simplify the process of using the dotnet S
 
 1. Install the dotnet-ai tool by invoking the following on your terminal: ``dotnet tool install dotnet-ai -g``.
 2. Set the OpenAI API Key as an environment variable.
-   1. If you are using Powershell, use: ``$env:OPENAI_API_KEY='Add Your OpenAI API Key Here'``
-   2. If you are using Command Prompt, use: ``set OPENAI_API_KEY=Add Your OPEN API KEY Without Quotations.``
+   1. If you are using Powershell, use: ``$env:OPENAI_API_KEY='Add Your OpenAI API Key Here'``.
+   2. If you are using Command Prompt, use: ``set OPENAI_API_KEY=Add Your OPEN API KEY Without Quotations``.
 3. Invoke the tool: 
    1. `dotnet-ai --query "Add your query here"`: This will list the steps required.
    2. `dotnet-ai --query "Add your query here" --execute`: This will list the steps required and then execute them.

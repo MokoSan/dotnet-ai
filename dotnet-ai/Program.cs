@@ -2,6 +2,7 @@
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.AI.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.AI.OpenAI.ChatCompletion;
+using Spectre.Console;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -25,7 +26,8 @@ namespace dotnet_ai
             string apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
             if (string.IsNullOrEmpty(apiKey))
             {
-                throw new ArgumentException("An OPENAI API Key must be added as an environment variable of name: OPENAI_API_KEY");
+                AnsiConsole.MarkupLine("[red bold] An Open API Key wasn't provided as an environment variable called OPENAI_API_KEY. Instructions on how to get generate one can be found: https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/ [/]");
+                return;
             }
 
             string orgId = "";
@@ -164,11 +166,17 @@ Assume the following defaults:
 3. The application type is console. " +
                 $"Query: {options.Query} {ifExecute}"); ;
 
-            string assistantReply = await chatGPT.GenerateMessageAsync(chat, new ChatRequestSettings() { MaxTokens = 10000, Temperature = 0.0 });
+            string assistantReply = string.Empty; 
+            await AnsiConsole.Status().StartAsync("Getting Response from OpenAI...", async ctx =>
+            {
+                assistantReply = await chatGPT.GenerateMessageAsync(chat, new ChatRequestSettings() { MaxTokens = 10000, Temperature = 0.0 });
+            });
             assistantReply = assistantReply.Replace("shell\n", "");
             chat.AddAssistantMessage(assistantReply);
 
-            Console.WriteLine("Instructions:");
+            var instructionsRule = new Rule("[green bold]Instructions[/]");
+            AnsiConsole.Write(instructionsRule);
+
             Console.WriteLine(assistantReply);
             Console.WriteLine("\n");
             if (!options.Execute)
@@ -176,11 +184,10 @@ Assume the following defaults:
                 return;
             }
 
-            Console.WriteLine("Executing Commands..");
+            var executionRule = new Rule("[green bold]Executing Instructions[/]");
+            AnsiConsole.Write(executionRule);
 
             Regex regex = new Regex(@"```(.+?)```", RegexOptions.Singleline);
-            Regex regex2 = new Regex(@"`(.+?)`", RegexOptions.Singleline);
-
             var matches = regex.Matches(assistantReply);
 
             foreach (Match match in matches)
@@ -193,6 +200,8 @@ Assume the following defaults:
                     case "dotnet":
                     case "shell":
                     case "shell\n":
+                    case "bash":
+                    case "bash\n":
                         using (Process process = new())
                         {
                             process.StartInfo.FileName = "dotnet";
