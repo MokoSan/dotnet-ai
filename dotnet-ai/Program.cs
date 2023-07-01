@@ -153,15 +153,16 @@ Additional commands from bundled tools:
  `dotnet workload` - Provides information about the available workload commands and installed workloads.    ```dotnet workload [--info]  dotnet workload -?|-h|--help ``` 
 """;
 
-            var systemMessage = $"You are a bot that generates a correctly formatted list with dotnet sdk commands and code based on the following documentation and convert all single backticks to triple backticks and all references to changing directories must be specified as a command: {skPrompt}.";
+            var systemMessage = $"You are a bot that generates a correctly formatted list with dotnet sdk commands and code based on the following documentation and all references to changing directories must be specified as a command: {skPrompt}.";
             var chat = (OpenAIChatHistory)chatGPT.CreateNewChat(systemMessage);
+            string ifExecute = options.Execute ? "And run - please add all steps enclosed in ```" : "";
             chat.AddUserMessage("Generate a list of all steps for the following query using the information above - the output should be descriptive, concise and contain the correct commands from the aforementioned documentation. If the user asks to write code, assume they want to create a project with the code" +
                 @"
 Assume the following defaults:
 1. The default language is C#.
 2. The project name is 'App'.
 3. The application type is console. " +
-                $"Query: {options.Query}"); ;
+                $"Query: {options.Query} {ifExecute}"); ;
 
             string assistantReply = await chatGPT.GenerateMessageAsync(chat, new ChatRequestSettings() { MaxTokens = 10000, Temperature = 0.0 });
             assistantReply = assistantReply.Replace("shell\n", "");
@@ -178,6 +179,8 @@ Assume the following defaults:
             Console.WriteLine("Executing Commands..");
 
             Regex regex = new Regex(@"```(.+?)```", RegexOptions.Singleline);
+            Regex regex2 = new Regex(@"`(.+?)`", RegexOptions.Singleline);
+
             var matches = regex.Matches(assistantReply);
 
             foreach (Match match in matches)
